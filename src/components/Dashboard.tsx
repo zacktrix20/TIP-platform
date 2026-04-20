@@ -63,7 +63,10 @@ export function Dashboard() {
     enrichSelected();
   }, [selectedIndicator]);
 
+  const apiBaseUrl = 'https://tip-backend-xyz.onrender.com';
+
   const api = axios.create({
+    baseURL: apiBaseUrl,
     timeout: 10000,
     headers: {
       'Accept': 'application/json',

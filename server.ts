@@ -6,6 +6,8 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import cors from 'cors';
+  const app = express();
+  app.use(cors()); //hii itatibu ile Error 404 ya kukata data.
 
 dotenv.config();
 
@@ -409,8 +411,11 @@ async function startServer() {
     });
   }
 
+  const backendUrl = 'https://tip-backend-xyz.onrender.com';
+
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Backend URL: ${backendUrl}`);
   }).on('error', (err: any) => {
     if (err.code === 'EADDRINUSE') {
       console.error(`Port ${PORT} is already in use. Please wait for the system to clear it or try restarting the dev server.`);
