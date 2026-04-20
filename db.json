@@ -1,0 +1,34 @@
+{
+  "indicators": [
+    {
+      "id": "185_156_177_214",
+      "value": "185.156.177.214",
+      "type": "ip",
+      "source": "Emerging Threats",
+      "description": "Known C2 server",
+      "severity": "high",
+      "confidence": 92,
+      "lastSeen": "2026-04-20T09:43:50.714Z",
+      "tags": [
+        "osint",
+        "ip"
+      ],
+      "analysis": "This IP address is associated with a known Command and Control (C2) server. Mitigation: Block all inbound and outbound traffic to this IP at the perimeter firewall."
+    },
+    {
+      "id": "secure-login-bank_xyz",
+      "value": "secure-login-bank.xyz",
+      "type": "domain",
+      "source": "OpenPhish",
+      "description": "Phishing domain targeting banking users",
+      "severity": "critical",
+      "confidence": 98,
+      "lastSeen": "2026-04-20T09:43:50.716Z",
+      "tags": [
+        "osint",
+        "domain"
+      ],
+      "analysis": "Active phishing site spoofing major financial institutions. Mitigation: Blacklist this domain in DNS and web proxy filters immediately."
+    }
+  ]
+}

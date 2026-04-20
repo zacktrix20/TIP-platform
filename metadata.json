@@ -1,0 +1,6 @@
+{
+  "name": "Threat Intelligence Platform (TIP)",
+  "description": "A centralized platform for gathering, analyzing, and deduplicating threat indicators (OSINT) to streamline security investigations and SIEM integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

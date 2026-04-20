@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "Indicator": {
+      "title": "Threat Indicator",
+      "description": "An individual indicator of compromise (IOC) gathered from OSINT feeds.",
+      "type": "object",
+      "properties": {
+        "value": { "type": "string", "description": "The IOC value (e.g., 8.8.8.8, infected.com, sha256_hash)" },
+        "type": { "type": "string", "enum": ["ip", "domain", "url", "hash", "email"] },
+        "source": { "type": "string", "description": "The name of the OSINT feed or source" },
+        "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "confidence": { "type": "number", "description": "Confidence score from 0 to 100" },
+        "description": { "type": "string", "description": "Short description of the threat" },
+        "lastSeen": { "type": "string", "format": "date-time" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "analysis": { "type": "string", "description": "AI-generated analysis or summary" },
+        "isDuplicate": { "type": "boolean", "description": "Whether this indicator is a deduplicated copy" }
+      },
+      "required": ["value", "type", "source"]
+    },
+    "Feed": {
+      "title": "Threat Feed",
+      "description": "An OSINT or private feed source for threat intelligence.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "lastSynced": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "url"]
+    }
+  },
+  "firestore": {
+    "/indicators/{indicatorId}": {
+      "schema": "Indicator",
+      "description": "Global indicators of compromise"
+    },
+    "/feeds/{feedId}": {
+      "schema": "Feed",
+      "description": "Configured threat intelligence feeds"
+    }
+  }
+}

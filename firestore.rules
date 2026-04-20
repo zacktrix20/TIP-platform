@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Catch-all deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Indicator Validation
+    function isValidIndicator(data) {
+      return data.value is string && data.value.size() <= 512 &&
+             data.type in ['ip', 'domain', 'url', 'hash', 'email'] &&
+             data.source is string && data.source.size() <= 100 &&
+             (data.severity == null || data.severity in ['low', 'medium', 'high', 'critical']) &&
+             (data.confidence == null || (data.confidence is number && data.confidence >= 0 && data.confidence <= 100)) &&
+             (data.description == null || (data.description is string && data.description.size() <= 1000)) &&
+             (data.analysis == null || (data.analysis is string && data.analysis.size() <= 5000)) &&
+             (data.tags == null || (data.tags is list && data.tags.size() <= 50)) &&
+             (data.isDuplicate == null || data.isDuplicate is bool);
+    }
+
+    // Feed Validation
+    function isValidFeed(data) {
+      return data.name is string && data.name.size() <= 100 &&
+             data.url is string && data.url.size() <= 1024 &&
+             (data.enabled == null || data.enabled is bool);
+    }
+
+    // Indicators Collection
+    match /indicators/{indicatorId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(indicatorId) && isValidIndicator(incoming()) && (incoming().isDuplicate == false || incoming().isDuplicate == null);
+      allow update: if isSignedIn() && isValidIndicator(incoming()) && (
+        // Prevent changing immutable fields
+        incoming().value == existing().value &&
+        incoming().type == existing().type &&
+        // Allow updating analysis or severity
+        incoming().diff(existing()).affectedKeys().hasOnly(['analysis', 'severity', 'confidence', 'description', 'lastSeen', 'tags', 'isDuplicate'])
+      );
+      allow delete: if isSignedIn(); // In a real app, only admins
+    }
+
+    // Feeds Collection
+    match /feeds/{feedId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isValidId(feedId) && isValidFeed(incoming());
+    }
+  }
+}
