@@ -111,7 +111,7 @@ function calculateRiskScore(indicator: any): number {
 
 async function startServer() {
   const app = express();
-  const PORT = 10000;
+  const finalPort = parseInt(process.env.PORT || '10000', 10);
 
   app.use(cors());
   
@@ -413,12 +413,15 @@ async function startServer() {
 
   const backendUrl = 'https://tip-backend-xyz.onrender.com';
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  app.listen(finalPort, "0.0.0.0", () => {
+    console.log(`Server running on http://localhost:${finalPort}`);
     console.log(`Backend URL: ${backendUrl}`);
   }).on('error', (err: any) => {
     if (err.code === 'EADDRINUSE') {
-      console.error(`Port ${PORT} is already in use. Please wait for the system to clear it or try restarting the dev server.`);
+      console.error(`Port ${finalPort} is already in use. Please wait for the system to clear it or try restarting the dev server.`);
+      process.exit(1);
+    } else if (err.code === 'EACCES' || err.code === 'EADDRNOTAVAIL') {
+      console.error(`Port scan timeout reached, failed to detect open port ${finalPort} from PORT environment variable. Bind your service to port ${finalPort} or update the PORT environment variable to the correct port`);
       process.exit(1);
     } else {
       console.error('Server error:', err);
