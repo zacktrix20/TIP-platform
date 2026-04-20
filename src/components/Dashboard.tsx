@@ -63,7 +63,7 @@ export function Dashboard() {
     enrichSelected();
   }, [selectedIndicator]);
 
-  const apiBaseUrl = 'https://tip-backend-xyz.onrender.com';
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://tip-platform-iaa.onrender.com';
 
   const api = axios.create({
     baseURL: apiBaseUrl,
